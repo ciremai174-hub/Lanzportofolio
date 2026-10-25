@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Single-owner admin allowlist. Keep this in sync with firestoreService.ts.
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email is string &&
+        request.auth.token.email.lower() == 'lanzelit18@gmail.com';
+    }
+
+    function isValidIncomingMessage() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['name', 'email', 'subject', 'message', 'status'])
+        && data.keys().hasOnly(['name', 'email', 'subject', 'message', 'status', 'createdAt'])
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.email is string && data.email.size() > 3 && data.email.size() <= 150
+        && data.subject is string && data.subject.size() > 0 && data.subject.size() <= 200
+        && data.message is string && data.message.size() > 0 && data.message.size() <= 3000
+        && data.status == 'unread';
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Connectivity verification probe
+    match /test/{testId} {
+      allow read: if true;
+    }
+
+    // Settings (Hero, Navigation, Profile, SiteConfig)
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(settingId);
+    }
+
+    // Showcase projects & photo album gallery
+    match /projects/{projectId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(projectId);
+    }
+
+    // Skills & technologies
+    match /skills/{skillId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(skillId);
+    }
+
+    // Social media dynamic links
+    match /socials/{socialId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(socialId);
+    }
+
+    // Contact messages (Public write-only with validation, admin full control)
+    match /messages/{messageId} {
+      allow create: if isValidId(messageId) && isValidIncomingMessage();
+      allow get, list, update, delete: if isAdmin() && isValidId(messageId);
+    }
+
+    // Admin user profiles (restricted to the allowlisted owner).
+    match /admins/{adminId} {
+      allow get: if isAdmin() && request.auth.token.email.lower() == adminId.lower();
+      allow list, create, update, delete: if isAdmin();
+    }
+  }
+}

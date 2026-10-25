@@ -1,0 +1,110 @@
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "Portfolio project / gallery album item",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 150 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "category": { "type": "string", "maxLength": 50 },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "date": { "type": "string", "maxLength": 50 },
+        "featured": { "type": "boolean" },
+        "createdAt": { "type": "string", "maxLength": 100 },
+        "updatedAt": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["title", "description", "category", "imageUrl"]
+    },
+    "Skill": {
+      "title": "Skill",
+      "description": "Skill category and technology competencies",
+      "type": "object",
+      "properties": {
+        "category": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 500 },
+        "order": { "type": "number" },
+        "createdAt": { "type": "string", "maxLength": 100 },
+        "updatedAt": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["category", "description"]
+    },
+    "Social": {
+      "title": "Social",
+      "description": "Dynamic social media channel link",
+      "type": "object",
+      "properties": {
+        "platform": { "type": "string", "maxLength": 50 },
+        "label": { "type": "string", "maxLength": 100 },
+        "url": { "type": "string", "maxLength": 500 },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["platform", "label", "url", "active"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Contact form inquiry message submitted by public visitors",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 150 },
+        "subject": { "type": "string", "maxLength": 200 },
+        "message": { "type": "string", "maxLength": 3000 },
+        "status": { "type": "string", "enum": ["unread", "read", "replied"] },
+        "createdAt": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["name", "email", "subject", "message", "status"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Website dynamic content settings including hero, navigation, profile, and site config",
+      "type": "object",
+      "properties": {
+        "hero": { "type": "object" },
+        "navigation": { "type": "object" },
+        "profile": { "type": "object" },
+        "siteConfig": { "type": "object" },
+        "updatedAt": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["hero", "navigation", "profile", "siteConfig"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Authorized administrator profile",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "maxLength": 150 },
+        "role": { "type": "string", "enum": ["superadmin", "admin"] },
+        "createdAt": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Album and project showcase collection"
+    },
+    "/skills/{skillId}": {
+      "schema": "Skill",
+      "description": "Technical skills and proficiencies"
+    },
+    "/socials/{socialId}": {
+      "schema": "Social",
+      "description": "Social media links"
+    },
+    "/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Public contact messages submitted to admin"
+    },
+    "/settings/{settingId}": {
+      "schema": "Settings",
+      "description": "Site content settings and configuration"
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "List of authorized administrator user accounts"
+    }
+  }
+}

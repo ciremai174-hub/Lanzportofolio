@@ -1,0 +1,6 @@
+{
+  "name": "LanzPortofolio",
+  "description": "Portofolio Modern Neo-Brutalism & Panel Admin Dinamis Real-Time CMS dengan Firebase Firestore & Firebase Auth",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
